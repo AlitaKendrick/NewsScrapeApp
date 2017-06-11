@@ -2,6 +2,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
+var logger = require("morgan");
 // comment and article models
 var Comment = require("./models/Comment.js");
 var Article = require("./models/Article.js");
@@ -14,6 +15,7 @@ mongoose.Promise = Promise;
 // initialize Express
 var app = express();
 
+app.use(logger("dev"));
 app.use(bodyParser.urlencoded({
   extended: false
 }));
@@ -38,9 +40,9 @@ db.once("open", function() {
 // Routes
 // ======
 
-app.get("/scrape", function(request, response){
+app.get("/scrape", function(req, res){
   request("https://hbr.org/the-latest", function(error, response, html){
-    var $cheerio = cheerio.load(html);
+    var $ = cheerio.load(html);
     $("h3.hed").each(function(i, element) {
       var result = {};
 
